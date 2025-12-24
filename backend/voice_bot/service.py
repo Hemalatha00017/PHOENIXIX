@@ -1,7 +1,13 @@
 from backend.voice_bot.stt import speech_to_text
-from backend.voice_bot.utils import save_temp_audio
+from backend.services.classifier import classify_lead
 
-async def process_audio(file):
-    file_path = save_temp_audio(file)
-    text = speech_to_text(file_path)
-    return text
+def process_audio(audio_path: str):
+    transcript = speech_to_text(audio_path)
+
+    lead_status = classify_lead(transcript)
+
+    return {
+        "transcript": transcript,
+        "lead_status": lead_status
+    }
+
