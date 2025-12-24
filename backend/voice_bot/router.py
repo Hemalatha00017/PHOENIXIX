@@ -12,5 +12,5 @@ async def analyze_call(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
 
     result = process_audio(file_path)
-
     return result
+

@@ -1,13 +1,18 @@
+from backend.services.classifier import classify_intent
 from backend.voice_bot.stt import speech_to_text
-from backend.services.classifier import classify_lead
 
-def process_audio(audio_path: str):
-    transcript = speech_to_text(audio_path)
+def process_audio(file_path: str):
+    stt_result = speech_to_text(file_path)
 
-    lead_status = classify_lead(transcript)
+    # 🔥 FIX: extract text safely
+    if isinstance(stt_result, dict):
+        text = stt_result.get("text", "")
+    else:
+        text = stt_result
+
+    analysis = classify_intent(text)
 
     return {
-        "transcript": transcript,
-        "lead_status": lead_status
+        "transcription": stt_result,
+        "analysis": analysis
     }
-

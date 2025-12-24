@@ -1,30 +1,46 @@
-def classify_lead(transcript: str):
-    transcript = transcript.lower()
+# backend/services/classifier.py
 
-    hot_keywords = [
-        "appointment", "book", "visit", "consultation",
-        "price", "cost", "today", "tomorrow"
-    ]
+INTENT_RULES = {
+    "HOT": {
+        "keywords": ["emergency", "pain", "urgent", "bleeding", "accident"],
+        "score": 90
+    },
+    "APPOINTMENT": {
+        "keywords": ["appointment", "book", "schedule", "consult"],
+        "score": 75
+    },
+    "ENQUIRY": {
+        "keywords": ["price", "cost", "details", "charges"],
+        "score": 50
+    },
+    "FOLLOW_UP": {
+        "keywords": ["call later", "callback", "tomorrow"],
+        "score": 40
+    },
+    "NOT_INTERESTED": {
+        "keywords": ["not interested", "don't call", "stop"],
+        "score": 0
+    }
+}
 
-    warm_keywords = [
-        "later", "call back", "thinking", "details", "information"
-    ]
+def classify_intent(text: str):
+    text = text.lower()
 
-    cold_keywords = [
-        "not interested", "busy", "wrong number", "no need"
-    ]
+    best_match = {
+        "intent": "UNKNOWN",
+        "score": 10,
+        "matched_keyword": None
+    }
 
-    for word in hot_keywords:
-        if word in transcript:
-            return "HOT"
+    for intent, rule in INTENT_RULES.items():
+        for keyword in rule["keywords"]:
+            if keyword in text:
+                return {
+                    "intent": intent,
+                    "score": rule["score"],
+                    "matched_keyword": keyword
+                }
 
-    for word in warm_keywords:
-        if word in transcript:
-            return "WARM"
+    return best_match
 
-    for word in cold_keywords:
-        if word in transcript:
-            return "COLD"
-
-    return "UNKNOWN"
 
